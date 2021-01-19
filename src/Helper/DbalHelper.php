@@ -41,7 +41,7 @@ class DbalHelper
      * @return array
      * @throws Exception
      */
-    public function listTables(): array
+    public static function listTables(): array
     {
         return self::SM()->listTables();
     }

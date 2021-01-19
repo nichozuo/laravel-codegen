@@ -34,11 +34,12 @@ class StubHelper
     /**
      * @param string $filePath
      * @param string $stubContent
+     * @param bool $force
      */
-    public static function save(string $filePath, string $stubContent)
+    public static function save(string $filePath, string $stubContent, bool $force = false)
     {
         $exists = File::exists($filePath);
-        if (!$exists) {
+        if (!$exists || $force) {
             File::makeDirectory(File::dirname($filePath), 0755, true, true);
             File::put($filePath, $stubContent);
         }
