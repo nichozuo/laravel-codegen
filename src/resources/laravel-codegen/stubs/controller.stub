@@ -1,0 +1,85 @@
+<?php
+
+
+namespace App\Modules\{{ModuleName}};
+
+
+use App\Http\Controllers\Controller;
+use App\Models\{{ModelName}};
+use Illuminate\Http\Request;
+
+class {{ModelName}}Controller extends Controller
+{
+    /**
+     * @intro 列表
+     * @params name,nullable|string,模糊搜索：名称
+     * @response "{"code":0,"message":"ok"}
+     *
+     * @param Request $request
+     * @return mixed
+     */
+    public function list(Request $request)
+    {
+        $params = $request->validate([
+            'name' => 'nullable|string',
+        ]);
+        return {{ModelName}}::whereLikeExist('name', $params)
+            ->order()
+            ->paginate($this->perPage());
+    }
+
+    /**
+     * @intro 添加
+     {{AnnotationString}}
+     * @response "{"code":0,"message":"ok"}
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function store(Request $request): array
+    {
+        $params = $request->validate([
+            {{InsertString}}
+        ]);
+        {{ModelName}}::unique($params, ['name'], '名称');
+        {{ModelName}}::create($params);
+        return [];
+    }
+
+    /**
+     * @intro 修改
+     * @params id,required|integer,id
+     {{AnnotationString}}
+     * @response "{"code":0,"message":"ok"}
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function update(Request $request): array
+    {
+        $params = $request->validate([
+            'id' => 'required|integer',
+            {{InsertString}}
+        ]);
+        {{ModelName}}::unique($params, ['name'], '名称');
+        {{ModelName}}::idp($params)->update($params);
+        return [];
+    }
+
+    /**
+     * @intro 删除
+     * @params id,required|integer,id
+     * @response "{"code":0,"message":"ok"}
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function delete(Request $request): array
+    {
+        $params = $request->validate([
+            'id' => 'required|integer',
+        ]);
+        {{ModelName}}::idp($params)->delete();
+        return [];
+    }
+}

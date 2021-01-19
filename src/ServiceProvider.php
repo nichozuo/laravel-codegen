@@ -4,9 +4,8 @@
 namespace Nichozuo\LaravelCodegen;
 
 
-use Nichozuo\LaravelCodegen\Commands\DumpTable\DumpTableCommand;
-use Nichozuo\LaravelCodegen\Commands\GenFiles\GenControllerCommand;
-use Nichozuo\LaravelCodegen\Commands\GenFiles\GenModelCommand;
+use Nichozuo\LaravelCodegen\Commands\DumpTableCommand;
+use Nichozuo\LaravelCodegen\Commands\GenFilesCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -16,8 +15,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         $this->commands([
             DumpTableCommand::class,
-            GenModelCommand::class,
-            GenControllerCommand::class
+            GenFilesCommand::class,
         ]);
     }
 }

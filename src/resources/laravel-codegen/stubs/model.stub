@@ -1,0 +1,33 @@
+<?php
+
+
+namespace App\Models;
+
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Nichozuo\LaravelUtils\Traits\ModelTrait;
+
+/**
+ * @method static where(string $string, mixed $param)
+ * @method static whereExist(string $string, array $params)
+ * @method static whereLikeExist(string $string, array $params)
+ * @method static create(array $params)
+ * @method static idp(array $params)
+ * @method static firstOrCreate(array $array, string[] $array1)
+ * @method static findOrFail($id)
+ * @method static unique(array $params, string[] $array, string $string)
+ * @method static find($id)
+ */
+class {{ModelName}} extends Model
+{
+    use ModelTrait, HasFactory;
+
+    # model defines
+    {{TableString}}
+    {{FillableString}}
+
+    # relations
+
+    # scopes
+}
