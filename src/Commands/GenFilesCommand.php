@@ -5,9 +5,7 @@ namespace Nichozuo\LaravelCodegen\Commands;
 
 
 use Exception;
-use Illuminate\Console\Command;
 use Illuminate\Database\Console\Migrations\BaseCommand;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Nichozuo\LaravelCodegen\Helper\DbalHelper;
 use Nichozuo\LaravelCodegen\Helper\GenHelper;
@@ -56,8 +54,6 @@ class GenFilesCommand extends BaseCommand
         $this->makeFactory($table, $args, $options);
         $this->makeSeed($table, $args, $options);
         $this->makeController($table, $args, $options);
-
-        dd($options, $args, $table, $module);
     }
 
     /**

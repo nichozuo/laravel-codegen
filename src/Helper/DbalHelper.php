@@ -50,7 +50,7 @@ class DbalHelper
      * @return array
      * @throws Exception
      */
-    public function listTableNames(): array
+    public static function listTableNames(): array
     {
         return self::SM()->listTableNames();
     }

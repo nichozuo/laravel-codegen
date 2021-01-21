@@ -44,4 +44,12 @@ class StubHelper
             File::put($filePath, $stubContent);
         }
     }
+
+    /**
+     * @param $dirPath
+     */
+    public static function removeDir($dirPath)
+    {
+        File::deleteDirectory($dirPath);
+    }
 }

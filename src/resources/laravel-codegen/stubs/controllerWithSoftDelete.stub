@@ -13,7 +13,7 @@ class {{ModelName}}Controller extends Controller
     /**
      * @intro 列表
      * @params name,nullable|string,模糊搜索：名称
-     * @response "{"code":0,"message":"ok"}
+     * @response {"code":0,"message":"ok"}
      *
      * @param Request $request
      * @return mixed
@@ -32,7 +32,7 @@ class {{ModelName}}Controller extends Controller
     /**
      * @intro 添加
      {{AnnotationString}}
-     * @response "{"code":0,"message":"ok"}
+     * @response {"code":0,"message":"ok"}
      *
      * @param Request $request
      * @return array
@@ -51,7 +51,7 @@ class {{ModelName}}Controller extends Controller
      * @intro 修改
      * @params id,required|integer,id
      {{AnnotationString}}
-     * @response "{"code":0,"message":"ok"}
+     * @response {"code":0,"message":"ok"}
      *
      * @param Request $request
      * @return array
@@ -70,7 +70,7 @@ class {{ModelName}}Controller extends Controller
     /**
      * @intro 软删除
      * @params id,required|integer,id
-     * @response "{"code":0,"message":"ok"}
+     * @response {"code":0,"message":"ok"}
      *
      * @param Request $request
      * @return array
@@ -87,7 +87,7 @@ class {{ModelName}}Controller extends Controller
     /**
      * @intro 恢复软删除
      * @params id,required|integer,id
-     * @response "{"code":0,"message":"ok"}
+     * @response {"code":0,"message":"ok"}
      *
      * @param Request $request
      * @return array
@@ -104,7 +104,7 @@ class {{ModelName}}Controller extends Controller
     /**
      * @intro 强制删除
      * @params id,required|integer,id
-     * @response "{"code":0,"message":"ok"}
+     * @response {"code":0,"message":"ok"}
      *
      * @param Request $request
      * @return array
