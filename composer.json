@@ -13,7 +13,8 @@
         "ext-json": "*",
         "laravel/framework": "~5.5.0|~5.6.0|~5.7.0|~5.8.0|^6.0|^7.0|^8.0",
         "doctrine/dbal": "^2.0|^3.0",
-        "jan-swiecki/simple-annotations": "^0.3.1"
+        "jan-swiecki/simple-annotations": "^0.3.1",
+        "nichozuo/laravel-utils": "dev-main"
     },
     "autoload": {
         "psr-4": {

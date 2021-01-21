@@ -14,7 +14,9 @@ class StubHelper
      */
     public static function getStub($name): string
     {
-        $path = __DIR__ . '/../resources/laravel-codegen/stubs/' . $name;
+        $path = resource_path('laravel-codegen/stubs/' . $name);
+        if (!File::exists($path))
+            $path = __DIR__ . '/../resources/laravel-codegen/stubs/' . $name;
         return File::get($path);
     }
 

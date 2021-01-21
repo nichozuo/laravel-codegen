@@ -20,4 +20,12 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             GenDocsCommand::class,
         ]);
     }
+
+    public function boot()
+    {
+        $this->publishes([
+            __DIR__ . '/resources/laravel-codegen' => resource_path('laravel-codegen'),
+            __DIR__ . '/resources/dist' => public_path('docs')
+        ]);
+    }
 }
