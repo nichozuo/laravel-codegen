@@ -67,6 +67,7 @@ class GenFilesCommand extends BaseCommand
             try {
                 $this->call('make:migration', [
                     'name' => "create_{$table}_table",
+                    '--create' => $table,
                     '--table' => $table,
                 ]);
             } catch (Exception $ex) {
