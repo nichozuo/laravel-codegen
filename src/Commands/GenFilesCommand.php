@@ -43,6 +43,8 @@ class GenFilesCommand extends BaseCommand
      */
     public function handle()
     {
+        DbalHelper::register();
+
         $options = $this->options();
         $args = $this->arguments();
 

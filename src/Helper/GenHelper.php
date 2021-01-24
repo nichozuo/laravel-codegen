@@ -101,7 +101,12 @@ class GenHelper
         $data['url'] = $route->uri;
         $data['method'] = $route->methods[0];
         $data['params'] = self::getParams($data, 'params');
-        $data['response'] = isset($data['response']) ? json_encode($data['response'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '';
+        $data['response'] = isset($data['response']) ?
+            json_encode($data['response'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) :
+            json_encode([
+                'code' => 0,
+                'message' => 'ok'
+            ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         $data['responseParams'] = self::getParams($data, 'responseParams');
 
         $stubContent = StubHelper::getStub('api.md');
@@ -125,12 +130,17 @@ class GenHelper
      */
     private static function getParams($data, $key): string
     {
-        if (!isset($data[$key]))
-            return '';
         $t1 = '';
 
+        if (isset($data['id'])) {
+            $t1 .= '|id|required|integer|id|' . PHP_EOL;
+        }
+
+        if (!isset($data[$key]))
+            return $t1;
+
         if (!is_array($data[$key]))
-            return '|' . str_replace(',', '|', $data[$key]) . '|' . PHP_EOL;
+            return $t1 .= '|' . str_replace(',', '|', $data[$key]) . '|' . PHP_EOL;
 
         foreach ($data[$key] as $item) {
             $t1 .= '|' . str_replace(',', '|', $item) . '|' . PHP_EOL;
