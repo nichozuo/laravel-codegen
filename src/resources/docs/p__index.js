@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([[4],{QeBL:function(n,e,c){"use strict";c.r(e);var s=c("nKUr");e["default"]=()=>Object(s["jsx"])("h1",{children:"\u6b22\u8fce\u4f7f\u7528\u672c\u7cfb\u7edf"})}}]);

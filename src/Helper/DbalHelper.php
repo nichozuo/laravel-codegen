@@ -6,6 +6,7 @@ namespace Nichozuo\LaravelCodegen\Helper;
 
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Table;
 use Illuminate\Support\Facades\DB;
 
 class DbalHelper
@@ -47,7 +48,7 @@ class DbalHelper
     }
 
     /**
-     * @return array
+     * @return Table[]
      * @throws Exception
      */
     public static function listTables(): array

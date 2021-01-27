@@ -4,6 +4,7 @@
 namespace Nichozuo\LaravelCodegen\Controller;
 
 
+use DocBlockReader\Reader;
 use Doctrine\DBAL\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -22,9 +23,14 @@ class HomeController
 
     private $basePath;
 
+    /**
+     * HomeController constructor.
+     * @throws Exception
+     */
     public function __construct()
     {
         $this->basePath = resource_path('laravel-codegen/readme/');
+        DbalHelper::register();
     }
 
     /**
@@ -196,6 +202,7 @@ class HomeController
     /**
      * @param $ref
      * @return array
+     * @throws \Exception
      */
     private function getModulesActions(ReflectionClass $ref): array
     {
@@ -203,9 +210,11 @@ class HomeController
         foreach ($ref->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if ($method->class != $ref->getName() || $method->name == '__construct')
                 continue;
+            $action = new Reader($ref->getName(), $method->name);
             $files[] = [
                 'key' => $ref->getName() . '@' . $method->name,
                 'title' => $method->name,
+                'subTitle' => $action->getParameter('intro'),
                 'isLeaf' => true,
             ];
         }
@@ -217,12 +226,14 @@ class HomeController
      */
     private function getDatabaseMenu(): array
     {
-        $tables = DbalHelper::listTableNames();
+        $tables = DbalHelper::listTables();
         $return = null;
         foreach ($tables as $table) {
             $return[] = [
-                'key' => $table,
-                'label' => $table
+                'key' => $table->getName(),
+                'title' => $table->getName(),
+                'subTitle' => $table->getComment(),
+                'isLeaf' => true
             ];
         }
         return $return;
@@ -267,7 +278,6 @@ class HomeController
      */
     private function getDatabaseContent($key): array
     {
-        DbalHelper::register();
         $tables = DbalHelper::listTables();
         foreach ($tables as $table) {
             if ($table->getName() != $key)
