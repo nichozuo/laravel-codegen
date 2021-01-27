@@ -8,7 +8,6 @@ use Doctrine\DBAL\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Nichozuo\LaravelCodegen\Helper\DbalHelper;
 use Nichozuo\LaravelCodegen\Helper\GenHelper;
@@ -21,6 +20,13 @@ class HomeController
 {
     use ControllerTrait;
 
+    private $basePath;
+
+    public function __construct()
+    {
+        $this->basePath = resource_path('laravel-codegen/readme/');
+    }
+
     /**
      * @title 获取不同类型菜单
      * @params type,required|string,菜单类型，如：readme/modules/database
@@ -28,8 +34,7 @@ class HomeController
      *
      * @param Request $request
      * @return array
-     * @throws ReflectionException
-     * @throws Exception
+     * @throws Exception|ReflectionException
      */
     public function getMenu(Request $request): array
     {
@@ -64,14 +69,13 @@ class HomeController
             'type' => 'required|string',
             'key' => 'required|string',
         ]);
-
         switch ($params['type']) {
             case 'readme':
                 return $this->getReadmeContent($params['type'], $params['key']);
             case 'modules':
-                return $this->getModulesContent($params['type'], $params['key']);
+                return $this->getModulesContent($params['key']);
             case 'database':
-                return $this->getDatabaseContent($params['type'], $params['key']);
+                return $this->getDatabaseContent($params['key']);
             default:
                 return [];
         }
@@ -82,18 +86,38 @@ class HomeController
      */
     private function getReadmeMenu(): array
     {
-        $dirs = null;
-        foreach (File::allFiles(resource_path('laravel-codegen/readme')) as $filePath) {
-            $filePath = str_replace('.md', '', $filePath);
-            $t1 = explode('/', $filePath);
-            $t1 = end($t1);
-            $dirs[] = [
-                'key' => $t1 . '.md',
-                'label' => $t1,
-                //'type' => 'readme'
+        return $this->getReadmeChildrenDirs($this->basePath);
+    }
+
+    /**
+     * @param $path
+     * @return array
+     */
+    private function getReadmeChildrenDirs($path): array
+    {
+        $arr = [];
+        foreach (File::directories($path) as $dir) {
+            $t1 = explode('/', $dir);
+            $name = end($t1);
+            $arr[] = [
+                'key' => str_replace($this->basePath, '', $dir),
+                'title' => $name,
+                'children' => $this->getReadmeChildrenDirs($dir)
             ];
         }
-        return $dirs;
+        foreach (File::files($path) as $file) {
+            $name = $file->getPathname();
+            $key = str_replace($this->basePath, '', $name);
+            $title = str_replace('.md', '', $key);
+            $title = explode('/', $title);
+            $title = end($title);
+            $arr[] = [
+                'key' => $key,
+                'title' => $title,
+                'isLeaf' => true
+            ];
+        }
+        return $arr;
     }
 
     /**
@@ -103,47 +127,86 @@ class HomeController
     private function getModulesMenu(): array
     {
         $dirs = null;
-        foreach (File::allFiles(app_path('Modules')) as $file) {
-            $path = $file->getRelativePath();
-            $pathName = $file->getRelativePathname();
-            $controllerName = explode('/', $pathName);
-            $controllerName = str_replace('.php', '', end($controllerName));
-
-            if ($path == '')
-                continue;
-            if (!isset($dirs[$path]['label']))
-                $dirs[$path] = [
-                    'key' => $path,
-                    'label' => $path,
-                    //'type' => 'modules'
-                ];
-            $dirs[$path]['children'][] = [
-                'key' => $path . '/' . $controllerName,
-                'label' => $controllerName,
-//                'type' => 'modules',
-                'children' => $this->getActions($path, $controllerName)
+        $baseDir = app_path('Modules/');
+        foreach (File::directories($baseDir) as $dir) {
+            $dir = str_replace($baseDir, '', $dir);
+            $dirs[] = [
+                'key' => $dir,
+                'title' => $dir,
+                'subTitle' => $this->getModulesSubTitle($dir),
+                'children' => $this->getModulesControllers($dir)
             ];
         }
         return $dirs;
     }
 
     /**
-     * @param string $path
-     * @param string $pathName
+     * @param string $dir
+     * @return string
+     */
+    private function getModulesSubTitle(string $dir): string
+    {
+        $base = [
+            'Admin' => '管理员',
+            'Agent' => '代理商',
+            'Company' => '公司',
+            'Customer' => '客户',
+            'Zhike' => '知客'
+        ];
+        return $base[$dir] . '模块';
+    }
+
+    /**
+     * @param string $dir
      * @return array
      * @throws ReflectionException
      */
-    private function getActions(string $path, string $pathName): array
+    private function getModulesControllers(string $dir): array
     {
-        $class = "App\\Modules\\{$path}\\{$pathName}";
-        $ref = new ReflectionClass($class);
+        $dirs = [];
+        foreach (File::allFiles(app_path('Modules/' . $dir)) as $file) {
+            $pathName = $file->getRelativePathname();
+            $controllerName = explode('/', $pathName);
+            $controllerName = str_replace('.php', '', end($controllerName));
+            $ref = new ReflectionClass('App\\Modules\\' . $dir . '\\' . $controllerName);
+            $dirs[] = [
+                'key' => $dir . '/' . $pathName,
+                'title' => $controllerName,
+                'subTitle' => $this->getSubTitleOfController($ref),
+                'children' => $this->getModulesActions($ref)
+            ];
+        }
+        return $dirs;
+    }
+
+    /**
+     * @param $ref
+     * @return string|string[]
+     */
+    private function getSubTitleOfController($ref)
+    {
+        $docs = $ref->getDocComment();
+        if (!$docs)
+            return '暂时没有名称';
+
+        $t1 = explode(PHP_EOL, $docs)[1];
+        return str_replace(' * ', '', $t1);
+    }
+
+    /**
+     * @param $ref
+     * @return array
+     */
+    private function getModulesActions(ReflectionClass $ref): array
+    {
         $files = null;
         foreach ($ref->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            if ($method->class != $class || $method->name == '__construct')
+            if ($method->class != $ref->getName() || $method->name == '__construct')
                 continue;
             $files[] = [
-                'key' => $class . '@' . $method->name,
-                'label' => $method->name
+                'key' => $ref->getName() . '@' . $method->name,
+                'title' => $method->name,
+                'isLeaf' => true,
             ];
         }
         return $files;
@@ -178,12 +241,11 @@ class HomeController
     }
 
     /**
-     * @param $type
      * @param $key
      * @return array
      * @throws \Exception
      */
-    private function getModulesContent($type, $key): array
+    private function getModulesContent($key): array
     {
         foreach (Route::getRoutes() as $route) {
             if (!Str::startsWith($route->uri, 'api/'))
@@ -199,12 +261,11 @@ class HomeController
     }
 
     /**
-     * @param $type
      * @param $key
      * @return array
      * @throws Exception
      */
-    private function getDatabaseContent($type, $key): array
+    private function getDatabaseContent($key): array
     {
         DbalHelper::register();
         $tables = DbalHelper::listTables();
@@ -217,4 +278,6 @@ class HomeController
         }
         return [];
     }
+
+
 }

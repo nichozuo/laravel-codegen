@@ -11,6 +11,14 @@ use Illuminate\Support\Facades\DB;
 class DbalHelper
 {
     /**
+     * @return AbstractSchemaManager
+     */
+    private static function SM(): AbstractSchemaManager
+    {
+        return DB::connection()->getDoctrineSchemaManager();
+    }
+
+    /**
      * @throws Exception
      */
     public static function register()
@@ -19,11 +27,12 @@ class DbalHelper
     }
 
     /**
-     * @return AbstractSchemaManager
+     * @param $table
+     * @param $comment
      */
-    private static function SM(): AbstractSchemaManager
+    public static function comment($table, $comment)
     {
-        return DB::connection()->getDoctrineSchemaManager();
+        DB::statement("ALTER TABLE `{$table}` comment '{$comment}'");
     }
 
     /**
