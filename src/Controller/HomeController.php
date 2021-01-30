@@ -29,7 +29,7 @@ class HomeController
      */
     public function __construct()
     {
-        $this->basePath = resource_path('laravel-codegen/readme/');
+        $this->basePath = resource_path('laravel-codegen' . DIRECTORY_SEPARATOR . 'readme' . DIRECTORY_SEPARATOR);
         DbalHelper::register();
     }
 
@@ -103,7 +103,7 @@ class HomeController
     {
         $arr = [];
         foreach (File::directories($path) as $dir) {
-            $t1 = explode('/', $dir);
+            $t1 = explode(DIRECTORY_SEPARATOR, $dir);
             $name = end($t1);
             $arr[] = [
                 'key' => str_replace($this->basePath, '', $dir),
@@ -115,7 +115,7 @@ class HomeController
             $name = $file->getPathname();
             $key = str_replace($this->basePath, '', $name);
             $title = str_replace('.md', '', $key);
-            $title = explode('/', $title);
+            $title = explode(DIRECTORY_SEPARATOR, $title);
             $title = end($title);
             $arr[] = [
                 'key' => $key,
@@ -133,7 +133,7 @@ class HomeController
     private function getModulesMenu(): array
     {
         $dirs = null;
-        $baseDir = app_path('Modules/');
+        $baseDir = app_path('Modules' . DIRECTORY_SEPARATOR);
         foreach (File::directories($baseDir) as $dir) {
             $dir = str_replace($baseDir, '', $dir);
             $dirs[] = [
@@ -173,13 +173,13 @@ class HomeController
     private function getModulesControllers(string $dir): array
     {
         $dirs = [];
-        foreach (File::allFiles(app_path('Modules/' . $dir)) as $file) {
+        foreach (File::allFiles(app_path('Modules' . DIRECTORY_SEPARATOR . $dir)) as $file) {
             $pathName = $file->getRelativePathname();
-            $controllerName = explode('/', $pathName);
+            $controllerName = explode(DIRECTORY_SEPARATOR, $pathName);
             $controllerName = str_replace('.php', '', end($controllerName));
             $ref = new ReflectionClass('App\\Modules\\' . $dir . '\\' . $controllerName);
             $dirs[] = [
-                'key' => $dir . '/' . $pathName,
+                'key' => $dir . DIRECTORY_SEPARATOR . $pathName,
                 'title' => $controllerName,
                 'subTitle' => $this->getSubTitleOfController($ref),
                 'children' => $this->getModulesActions($ref)
@@ -197,8 +197,7 @@ class HomeController
         $docs = $ref->getDocComment();
         if (!$docs)
             return '暂时没有名称';
-
-        $t1 = explode(PHP_EOL, $docs)[1];
+        $t1 = trim(explode('* ', $docs)[1]);
         return str_replace(' * ', '', $t1);
     }
 
@@ -250,7 +249,7 @@ class HomeController
     private function getReadmeContent($type, $key): array
     {
         return [
-            'content' => File::get(resource_path('laravel-codegen/' . $type . '/' . $key))
+            'content' => File::get(resource_path('laravel-codegen' . DIRECTORY_SEPARATOR . $type . DIRECTORY_SEPARATOR . $key))
         ];
     }
 
@@ -291,6 +290,4 @@ class HomeController
         }
         return [];
     }
-
-
 }
