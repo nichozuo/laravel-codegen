@@ -159,7 +159,10 @@ class HomeController
             'Customer' => '客户',
             'Zhike' => '知客'
         ];
-        return $base[$dir] . '模块';
+        if (isset($base[$dir]))
+            return $base[$dir] . '模块';
+        else
+            return '未知模块';
     }
 
     /**

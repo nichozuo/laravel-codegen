@@ -24,8 +24,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot()
     {
         $this->publishes([
+            __DIR__ . '/resources/docs' => public_path('docs'),
             __DIR__ . '/resources/laravel-codegen' => resource_path('laravel-codegen'),
-            __DIR__ . '/resources/docs' => public_path('docs')
         ]);
     }
 }
