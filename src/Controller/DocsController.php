@@ -7,6 +7,7 @@ namespace Nichozuo\LaravelCodegen\Controller;
 use DocBlockReader\Reader;
 use Doctrine\DBAL\Exception;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -17,7 +18,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 
-class HomeController
+class DocsController extends BaseController
 {
     use ControllerTrait;
 

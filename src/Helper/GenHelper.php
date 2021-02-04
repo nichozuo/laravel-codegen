@@ -107,7 +107,7 @@ class GenHelper
                 'code' => 0,
                 'message' => 'ok'
             ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        $data['responseParams'] = self::getParams($data, 'responseParams');
+        $data['responseParams'] = self::getParams($data, 'responseParams', false);
 
         $stubContent = StubHelper::getStub('api.md');
         $stubContent = StubHelper::replace([
@@ -126,23 +126,30 @@ class GenHelper
     /**
      * @param $data
      * @param $key
+     * @param bool $params
      * @return string
      */
-    private static function getParams($data, $key): string
+    private static function getParams($data, $key, $params = true): string
     {
         $t1 = '';
 
-        if (isset($data['id'])) {
-            $t1 .= '|id|required|integer|id|' . PHP_EOL;
+        if (isset($data['id']) &&  $params) {
+            $t1 .= '|id|是|integer|id|' . PHP_EOL;
         }
 
         if (!isset($data[$key]))
             return $t1;
 
-        if (!is_array($data[$key]))
-            return $t1 .= '|' . str_replace(',', '|', $data[$key]) . '|' . PHP_EOL;
+        if (!is_array($data[$key])) {
+            $item = $data[$key];
+            $item = str_replace('nullable|', '- |', $item);
+            $item = str_replace('required|', '是 |', $item);
+            return $t1 .= '|' . str_replace(',', '|', $item) . '|' . PHP_EOL;
+        }
 
         foreach ($data[$key] as $item) {
+            $item = str_replace('nullable|', '- |', $item);
+            $item = str_replace('required|', '是 |', $item);
             $t1 .= '|' . str_replace(',', '|', $item) . '|' . PHP_EOL;
         }
 

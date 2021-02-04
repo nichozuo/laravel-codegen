@@ -8,13 +8,16 @@ use App\Http\Controllers\Controller;
 use App\Models\{{ModelName}};
 use Illuminate\Http\Request;
 
+/**
+ * 暂时没有描述
+ * Class {{ModelName}}Controller
+ * @package App\Modules\{{ModuleName}}
+ */
 class {{ModelName}}Controller extends Controller
 {
     /**
      * @intro 列表
      * @params name,nullable|string,模糊搜索：名称
-     * @response {"code":0,"message":"ok"}
-     *
      * @param Request $request
      * @return mixed
      */
@@ -31,8 +34,6 @@ class {{ModelName}}Controller extends Controller
     /**
      * @intro 添加
      {{AnnotationString}}
-     * @response {"code":0,"message":"ok"}
-     *
      * @param Request $request
      * @return array
      */
@@ -48,10 +49,8 @@ class {{ModelName}}Controller extends Controller
 
     /**
      * @intro 修改
-     * @params id,required|integer,id
+     * @id
      {{AnnotationString}}
-     * @response {"code":0,"message":"ok"}
-     *
      * @param Request $request
      * @return array
      */
@@ -68,9 +67,7 @@ class {{ModelName}}Controller extends Controller
 
     /**
      * @intro 删除
-     * @params id,required|integer,id
-     * @response {"code":0,"message":"ok"}
-     *
+     * @id
      * @param Request $request
      * @return array
      */
