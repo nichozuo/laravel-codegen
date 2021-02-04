@@ -27,5 +27,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__ . '/resources/docs' => public_path('docs'),
             __DIR__ . '/resources/laravel-codegen' => resource_path('laravel-codegen'),
         ]);
+
+        $this->loadRoutesFrom(__DIR__.'/Routes/api.php');
+
     }
 }
